@@ -2,8 +2,10 @@
 
 Public Class Form3
     Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        DataGridView1.Rows.Clear()
+
+        If cn.State <> ConnectionState.Closed Then cn.Close()
         cn.Open()
+        DataGridView1.Rows.Clear()
         cm = New MySqlCommand("SELECT * FROM rfid_students order by rfid, firstName, middleName, lastName, age", cn)
         dr = cm.ExecuteReader
         While dr.Read

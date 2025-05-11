@@ -22,7 +22,6 @@ Partial Class Form4
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Me.Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
         Me.agetxt = New Guna.UI2.WinForms.Guna2TextBox()
         Me.lastNametxt = New Guna.UI2.WinForms.Guna2TextBox()
@@ -30,7 +29,6 @@ Partial Class Form4
         Me.firstNametxt = New Guna.UI2.WinForms.Guna2TextBox()
         Me.rfid = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.SerialPort1 = New System.IO.Ports.SerialPort(Me.components)
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
@@ -153,9 +151,6 @@ Partial Class Form4
         Me.Label1.Size = New System.Drawing.Size(0, 24)
         Me.Label1.TabIndex = 18
         '
-        'SerialPort1
-        '
-        '
         'Label2
         '
         Me.Label2.AutoSize = True
@@ -236,7 +231,6 @@ Partial Class Form4
     Friend WithEvents firstNametxt As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents rfid As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Label1 As Label
-    Friend WithEvents SerialPort1 As IO.Ports.SerialPort
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents Label4 As Label

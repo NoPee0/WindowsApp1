@@ -1,8 +1,10 @@
 ﻿Imports System.IO.Ports
 Imports System.Web.UI.WebControls
+Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
 
 Module Module1
+    Public WithEvents SharedSerialPort As New IO.Ports.SerialPort()
     Public cn As New MySqlConnection
     Public cm As New MySqlCommand
     Public dr As MySqlDataReader
@@ -11,7 +13,7 @@ Module Module1
         Try
             If cn.State <> ConnectionState.Closed Then cn.Close()
 
-            cn.ConnectionString = "server=sql102.infinityfree.com;user id=if0_38953241;password=y3UFOGWUJTys8jQ;database=if0_38953241_rfid_students;"
+            cn.ConnectionString = "server=sql12.freesqldatabase.com;user id=sql12777652;password=vhBv2bsUYz;database=sql12777652;"
 
             cn.Open()
 
@@ -66,6 +68,61 @@ Module Module1
         End Try
     End Function
 
+    Public Sub connectSerial(sPort As SerialPort, baudRate As ComboBox, port As ComboBox)
+
+        sPort.PortName = port.Text
+        sPort.BaudRate = Convert.ToInt32(baudRate.SelectedItem)
+        sPort.Parity = Parity.None
+        sPort.StopBits = StopBits.One
+        sPort.DataBits = 8
+        sPort.Handshake = Handshake.None
+
+        Try
+            sPort.Open()
+            MessageBox.Show("Connected")
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message)
+        End Try
+    End Sub
+
+
+    Public Sub rfidSerial(form As Form, rfidserial As SerialPort, rfidshow As Guna.UI2.WinForms.Guna2TextBox)
+        AddHandler rfidserial.DataReceived, Sub(sender As Object, e As EventArgs)
+                                                Try
+                                                    If rfidserial.IsOpen Then
+                                                        Dim buffer As String = rfidserial.ReadExisting()
+
+                                                        If Not String.IsNullOrWhiteSpace(buffer) Then
+                                                            Dim lines() As String = buffer.Split({ControlChars.Lf, ControlChars.Cr}, StringSplitOptions.RemoveEmptyEntries)
+                                                            Dim uid As String = ""
+
+                                                            For Each line In lines
+                                                                If line.ToLower().Contains("uid:") Then
+                                                                    Dim parts = line.Split(":"c)
+                                                                    If parts.Length > 1 Then
+                                                                        uid = parts(1).Trim()
+                                                                        Exit For
+                                                                    End If
+                                                                End If
+                                                            Next
+
+                                                            If uid <> "" Then
+
+                                                                If form.InvokeRequired Then
+                                                                    form.Invoke(Sub() rfidshow.Text = uid)
+                                                                Else
+                                                                    rfidshow.Text = uid
+                                                                    MessageBox.Show(rfidshow.Text)
+                                                                End If
+                                                            End If
+                                                        End If
+                                                    End If
+                                                Catch ex As Exception
+                                                    MessageBox.Show("Error reading data: " & ex.Message)
+                                                End Try
+                                            End Sub
+    End Sub
+
     Public Sub SetupGunaPlaceholder(txt As Guna.UI2.WinForms.Guna2TextBox, placeholder As String)
         txt.PlaceholderText = placeholder
 
@@ -92,20 +149,5 @@ Module Module1
         End If
     End Sub
 
-
-    Public Sub searchPort(lb As ListBox)
-        Try
-            Dim ports As String() = SerialPort.GetPortNames()
-            lb.Items.Clear()
-
-            If ports.Length > 0 Then
-                lb.Items.AddRange(ports.Cast(Of Object)().ToArray())
-            Else
-                lb.Items.Add("No COM ports found")
-            End If
-        Catch ex As Exception
-            MessageBox.Show("Error retrieving ports: " & ex.Message)
-        End Try
-    End Sub
 
 End Module
